@@ -5,14 +5,14 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/chessground.js',
+      file: 'dist/makrukground.js',
       format: 'iife',
-      name: 'Chessground',
+      name: 'Makrukground',
     },
     {
-      file: 'dist/chessground.min.js',
+      file: 'dist/makrukground.min.js',
       format: 'iife',
-      name: 'Chessground',
+      name: 'Makrukground',
       plugins: [
         terser(),
       ],

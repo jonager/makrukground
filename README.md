@@ -57,7 +57,9 @@ npm install --save makrukground
 ```js
 import { Makrukground } from 'makrukground';
 
-const config = {};
+const config = {
+  fen: 'rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR'
+}
 const ground = Makrukground(document.body, config);
 ```
 
