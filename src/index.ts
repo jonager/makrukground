@@ -1,3 +1,3 @@
-import { Chessground } from './chessground.js'
+import { Makrukground } from './makrukground.js'
 
-export default Chessground
+export default Makrukground

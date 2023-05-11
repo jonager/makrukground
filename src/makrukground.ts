@@ -9,7 +9,7 @@ import * as autoPieces from './autoPieces.js'
 import * as svg from './svg.js'
 import * as util from './util.js'
 
-export function Chessground(element: HTMLElement, config?: Config): Api {
+export function Makrukground(element: HTMLElement, config?: Config): Api {
   const maybeState: State | HeadlessState = defaults()
 
   configure(maybeState, config || {})
