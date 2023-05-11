@@ -1,3 +1,3 @@
-import { Chessground } from './chessground.js';
+import { Chessground } from './chessground.js'
 
-export default Chessground;
+export default Chessground
