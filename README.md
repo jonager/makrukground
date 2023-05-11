@@ -3,7 +3,7 @@
 [![Continuous Integration](https://github.com/lichess-org/chessground/workflows/Continuous%20Integration/badge.svg)](https://github.com/lichess-org/chessground/actions?query=workflow%3A%22Continuous+Integration%22)
 [![npm](https://img.shields.io/npm/v/chessground)](https://www.npmjs.com/package/chessground)
 
-![Makrukground in 2D and 3D](/screenshot/twin.jpg)
+![Makrukground in 2D and 3D](/screenshot/2d-example.png)
 
 _Makrukground_ is a free/libre open source makruk UI developed for
 [thaichess.org](https://thaichess.org).
