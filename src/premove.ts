@@ -8,11 +8,7 @@ const diff = (a: number, b: number): number => Math.abs(a - b)
 const pawn =
   (color: cg.Color): Mobility =>
   (x1, y1, x2, y2) =>
-    diff(x1, x2) < 2 &&
-    (color === 'white'
-      ? // allow 2 squares from first two ranks, for horde
-        y2 === y1 + 1 || (y1 <= 1 && y2 === y1 + 2 && x1 === x2)
-      : y2 === y1 - 1 || (y1 >= 6 && y2 === y1 - 2 && x1 === x2))
+    diff(x1, x2) < 2 && (color === 'white' ? y2 === y1 + 1 : y2 === y1 - 1)
 
 export const knight: Mobility = (x1, y1, x2, y2) => {
   const xd = diff(x1, x2)
@@ -21,7 +17,7 @@ export const knight: Mobility = (x1, y1, x2, y2) => {
 }
 
 const bishop: Mobility = (x1, y1, x2, y2) => {
-  return diff(x1, x2) === diff(y1, y2)
+  return diff(x1, x2) < 2 && diff(y1, y2) < 2 && y1 !== y2
 }
 
 const rook: Mobility = (x1, y1, x2, y2) => {
@@ -29,31 +25,14 @@ const rook: Mobility = (x1, y1, x2, y2) => {
 }
 
 export const queen: Mobility = (x1, y1, x2, y2) => {
-  return bishop(x1, y1, x2, y2) || rook(x1, y1, x2, y2)
+  const xd = diff(x1, x2)
+  const yd = diff(y1, y2)
+  return xd === yd && xd < 2 && yd < 2
 }
 
-const king =
-  (color: cg.Color, rookFiles: number[], canCastle: boolean): Mobility =>
-  (x1, y1, x2, y2) =>
-    (diff(x1, x2) < 2 && diff(y1, y2) < 2) ||
-    (canCastle &&
-      y1 === y2 &&
-      y1 === (color === 'white' ? 0 : 7) &&
-      ((x1 === 4 && ((x2 === 2 && rookFiles.includes(0)) || (x2 === 6 && rookFiles.includes(7)))) ||
-        rookFiles.includes(x2)))
+const king: Mobility = (x1, y1, x2, y2) => diff(x1, x2) < 2 && diff(y1, y2) < 2
 
-function rookFilesOf(pieces: cg.Pieces, color: cg.Color) {
-  const backrank = color === 'white' ? '1' : '8'
-  const files = []
-  for (const [key, piece] of pieces) {
-    if (key[1] === backrank && piece.color === color && piece.role === 'rook') {
-      files.push(util.key2pos(key)[0])
-    }
-  }
-  return files
-}
-
-export function premove(pieces: cg.Pieces, key: cg.Key, canCastle: boolean): cg.Key[] {
+export function premove(pieces: cg.Pieces, key: cg.Key): cg.Key[] {
   const piece = pieces.get(key)
   if (!piece) return []
   const pos = util.key2pos(key),
@@ -69,7 +48,7 @@ export function premove(pieces: cg.Pieces, key: cg.Key, canCastle: boolean): cg.
         ? rook
         : r === 'queen'
         ? queen
-        : king(piece.color, rookFilesOf(pieces, piece.color), canCastle)
+        : king
   return util.allPos
     .filter(pos2 => (pos[0] !== pos2[0] || pos[1] !== pos2[1]) && mobility(pos[0], pos[1], pos2[0], pos2[1]))
     .map(util.pos2key)

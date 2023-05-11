@@ -5,7 +5,6 @@ import { Config, configure, applyAnimation } from './config.js'
 import { anim, render } from './anim.js'
 import { cancel as dragCancel, dragNewPiece } from './drag.js'
 import { DrawShape } from './draw.js'
-import { explosion } from './explosion.js'
 import * as cg from './types.js'
 
 export interface Api {
@@ -17,7 +16,7 @@ export interface Api {
   state: State
 
   // get the position as a FEN string (only contains pieces, no flags)
-  // e.g. rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
+  // e.g. rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR
   getFen(): cg.FEN
 
   // change the view angle
@@ -52,9 +51,6 @@ export interface Api {
 
   // cancel current move and prevent further ones
   stop(): void
-
-  // make squares explode (atomic chess)
-  explode(keys: cg.Key[]): void
 
   // programmatically draw user shapes
   setShapes(shapes: DrawShape[]): void
@@ -154,10 +150,6 @@ export function start(state: State, redrawAll: cg.Redraw): Api {
         board.stop(state)
         dragCancel(state)
       }, state)
-    },
-
-    explode(keys: cg.Key[]): void {
-      explosion(state, keys)
     },
 
     setAutoShapes(shapes: DrawShape[]): void {

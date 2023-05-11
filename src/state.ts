@@ -14,7 +14,6 @@ export interface HeadlessState {
   selected?: cg.Key // square currently selected "a1"
   coordinates: boolean // include coords attributes
   ranksPosition: cg.RanksPosition // position ranks on either side. left | right
-  autoCastle: boolean // immediately complete the castle by moving the rook after king move
   viewOnly: boolean // don't bind events: the user will never be able to move pieces around
   disableContextMenu: boolean // because who needs a context menu on a makruk board
   addPieceZIndex: boolean // adds z-index values to pieces (for 3D)
@@ -39,12 +38,10 @@ export interface HeadlessState {
       after?: (orig: cg.Key, dest: cg.Key, metadata: cg.MoveMetadata) => void // called after the move has been played
       afterNewPiece?: (role: cg.Role, key: cg.Key, metadata: cg.MoveMetadata) => void // called after a new piece is dropped on the board
     }
-    rookCastle: boolean // castle by moving the king to the rook
   }
   premovable: {
     enabled: boolean // allow premoves for color that can not move
     showDests: boolean // whether to add the premove-dest class on squares
-    castle: boolean // whether to allow king castle premoves
     dests?: cg.Key[] // premove destinations for the current selection
     current?: cg.KeyPair // keys of the current saved premove ["e2" "e4"]
     events: {
@@ -111,7 +108,6 @@ export function defaults(): HeadlessState {
     turnColor: 'white',
     coordinates: true,
     ranksPosition: 'right',
-    autoCastle: true,
     viewOnly: false,
     disableContextMenu: false,
     addPieceZIndex: false,
@@ -129,13 +125,11 @@ export function defaults(): HeadlessState {
       free: true,
       color: 'both',
       showDests: true,
-      events: {},
-      rookCastle: true
+      events: {}
     },
     premovable: {
       enabled: true,
       showDests: true,
-      castle: true,
       events: {}
     },
     predroppable: {

@@ -64,35 +64,6 @@ export function unsetPredrop(state: HeadlessState): void {
   }
 }
 
-function tryAutoCastle(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
-  if (!state.autoCastle) return false
-
-  const king = state.pieces.get(orig)
-  if (!king || king.role !== 'king') return false
-
-  const origPos = key2pos(orig)
-  const destPos = key2pos(dest)
-  if ((origPos[1] !== 0 && origPos[1] !== 7) || origPos[1] !== destPos[1]) return false
-  if (origPos[0] === 4 && !state.pieces.has(dest)) {
-    if (destPos[0] === 6) dest = pos2key([7, destPos[1]])
-    else if (destPos[0] === 2) dest = pos2key([0, destPos[1]])
-  }
-  const rook = state.pieces.get(dest)
-  if (!rook || rook.color !== king.color || rook.role !== 'rook') return false
-
-  state.pieces.delete(orig)
-  state.pieces.delete(dest)
-
-  if (origPos[0] < destPos[0]) {
-    state.pieces.set(pos2key([6, destPos[1]]), king)
-    state.pieces.set(pos2key([5, destPos[1]]), rook)
-  } else {
-    state.pieces.set(pos2key([2, destPos[1]]), king)
-    state.pieces.set(pos2key([3, destPos[1]]), rook)
-  }
-  return true
-}
-
 export function baseMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.Piece | boolean {
   const origPiece = state.pieces.get(orig),
     destPiece = state.pieces.get(dest)
@@ -100,10 +71,8 @@ export function baseMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.P
   const captured = destPiece && destPiece.color !== origPiece.color ? destPiece : undefined
   if (dest === state.selected) unselect(state)
   callUserFunction(state.events.move, orig, dest, captured)
-  if (!tryAutoCastle(state, orig, dest)) {
-    state.pieces.set(dest, origPiece)
-    state.pieces.delete(orig)
-  }
+  state.pieces.set(dest, origPiece)
+  state.pieces.delete(orig)
   state.lastMove = [orig, dest]
   state.check = undefined
   callUserFunction(state.events.change)
@@ -203,7 +172,7 @@ export function selectSquare(state: HeadlessState, key: cg.Key, force?: boolean)
 export function setSelected(state: HeadlessState, key: cg.Key): void {
   state.selected = key
   if (isPremovable(state, key)) {
-    state.premovable.dests = premove(state.pieces, key, state.premovable.castle)
+    state.premovable.dests = premove(state.pieces, key)
   } else state.premovable.dests = undefined
 }
 
@@ -239,7 +208,7 @@ function isPremovable(state: HeadlessState, orig: cg.Key): boolean {
 }
 
 const canPremove = (state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean =>
-  orig !== dest && isPremovable(state, orig) && premove(state.pieces, orig, state.premovable.castle).includes(dest)
+  orig !== dest && isPremovable(state, orig) && premove(state.pieces, orig).includes(dest)
 
 function canPredrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
   const piece = state.pieces.get(orig)
